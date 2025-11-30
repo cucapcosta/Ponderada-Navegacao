@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(cg_solver_cpp)
+project(robert)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(cg_interfaces REQUIRED)
 
-add_executable(solver_node src/solver_node.cpp)
+add_executable(solver_node src/robert.cpp)
 target_include_directories(solver_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
