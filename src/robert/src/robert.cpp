@@ -22,27 +22,7 @@ struct mapa
     bool valido = false;
 };
 
-struct ArredoresMapping
-{
-    string up;
-    string down;
-    string left;
-    string right;
-};
 
-ArredoresMapping lerArredoresMapping(const cg_interfaces::msg::RobotSensors &sensores)
-{
-    return {sensores.up, sensores.down, sensores.left, sensores.right};
-}
-
-ArredoresMapping lerArredoresMapping(const cg_interfaces::msg::RobotSensors::SharedPtr &sensores)
-{
-    if (!sensores)
-    {
-        return {};
-    }
-    return lerArredoresMapping(*sensores);
-}
 
 vector<pair<int, int>> adicionarArredores(const pair<int, int> &pos, const mapa &map)
 {
@@ -77,7 +57,7 @@ vector<pair<int, int>> adicionarArredores(const pair<int, int> &pos, const mapa 
     return arredores;
 }
 
-bool verificarVizinhos(pair<int, int> pos_atual, const ArredoresMapping &arredores, const vector<vector<bool>> &visitados, vector<pair<int, int>> &pilha)
+bool verificarVizinhos(pair<int, int> pos_atual, const cg_interfaces::msg::RobotSensors &arredores, const vector<vector<bool>> &visitados, vector<pair<int, int>> &pilha)
 {
     int livres = 0;
     int r = pos_atual.first;
@@ -301,7 +281,7 @@ mapa getMap(const rclcpp::Node::SharedPtr &node)
     return resultado;
 }
 
-ArredoresMapping lerSensorAtual(const rclcpp::Node::SharedPtr &node)
+cg_interfaces::msg::RobotSensors lerSensorAtual(const rclcpp::Node::SharedPtr &node)
 {
     cg_interfaces::msg::RobotSensors::SharedPtr msg;
     auto sub = node->create_subscription<cg_interfaces::msg::RobotSensors>(
@@ -315,10 +295,10 @@ ArredoresMapping lerSensorAtual(const rclcpp::Node::SharedPtr &node)
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         if (std::chrono::steady_clock::now() - start > std::chrono::seconds(2)) {
              RCLCPP_WARN(node->get_logger(), "Timeout esperando sensor");
-             return {};
+             return cg_interfaces::msg::RobotSensors();
         }
     }
-    return lerArredoresMapping(msg);
+    return *msg;
 }
 
 pair<int, int> moverRobo(const rclcpp::Node::SharedPtr &node, pair<int, int> de, pair<int, int> para)
@@ -347,7 +327,6 @@ bool explorarMapa(const rclcpp::Node::SharedPtr &node, pair<int,int> posicao_ini
     vector<vector<bool>> temDivergencia(rows, vector<bool>(cols, false));
     vector<vector<pair<int, int>>> parent(rows, vector<pair<int, int>>(cols, {-1, -1}));
     
-    printf("Iniciando exploracao DFS...\n");
     while(!pilha.empty())
     {
         auto target = pilha.back();
@@ -362,7 +341,7 @@ bool explorarMapa(const rclcpp::Node::SharedPtr &node, pair<int,int> posicao_ini
         printf("Processando alvo (%d, %d). Posicao atual: (%d, %d)\n", 
                target.first, target.second, pos_robo.first, pos_robo.second);
 
-        // Lógica de Navegação (Backtracking físico)
+        // Lógica de Navegação 
         if (target != pos_robo) 
         {
              auto p_target = parent[target.first][target.second];
@@ -467,27 +446,6 @@ bool explorarMapa(const rclcpp::Node::SharedPtr &node, pair<int,int> posicao_ini
         }
     }
     printf("Exploracao DFS finalizada.\n");
-
-
-    bool contem_todos = true;
-    for (const auto &ponto_optimo : caminho_optimo)
-    {
-        bool encontrado = false;
-        for (const auto &ponto_total : caminho_total)
-        {
-            if (ponto_optimo == ponto_total)
-            {
-                encontrado = true;
-                break;
-            }
-        }
-        if (!encontrado)
-        {
-            contem_todos = false;
-            break;
-        }
-    }
-
     return contem_todos;
 }
 void fullMapSolver(const rclcpp::Node::SharedPtr &node)
