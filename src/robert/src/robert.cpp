@@ -448,6 +448,7 @@ bool explorarMapa(const rclcpp::Node::SharedPtr &node, pair<int,int> posicao_ini
     printf("Exploracao DFS finalizada.\n");
     return contem_todos;
 }
+
 void fullMapSolver(const rclcpp::Node::SharedPtr &node)
 {
     // Vamos, no primeiro desafio, encontrar o melhor caminho até o robô

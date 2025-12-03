@@ -44,3 +44,9 @@
 &emsp;Passado isso, temos nosso loop principal de navegação: Começamos verificando se o robô já está no seu target de movimento. Se não estiver, vamos movendo o robô seguindo os parentes até chegarmos no parent do alvo. Sainda nesse loop, fazemos uma verificação de segurança para garantir que o robô não está no target ao tentar se mover, se houver alguma interferência externa.
 &emsp;Depois, marcamos o ponto atual como visitado, adicionamos ao caminho total, e verificamos se o alvo atual é o objetivo. Se for, falamos que alcançamos o objetivo e fazemos a verificação se o caminho otimizado pode ser utilizado no mapa descoberto.
 &emsp;Os sensores são chamados no final do loop para mante-los atualizados após a movimentação, e as células adjacentes são adicionados a pilha.
+
+
+
+[Link do vídeo](https://drive.google.com/file/d/1YEj0Jnbgvesq3vljXGN3N_QcddaBPWAN/view?usp=sharing)
+
+&emsp;Agora vi o tamanho do vídeo... Só tenho desculpas a pedir, mas queria ser beeeeeem explicativo com tudo
